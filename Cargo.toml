@@ -6,6 +6,3 @@ resolver = "2"
 codegen-units = 1
 lto = true
 opt-level = 3
-
-[package.metadata.deb]
-features = ["device_flex8"]
