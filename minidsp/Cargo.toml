@@ -114,10 +114,7 @@ extended-description = """\
 Provides a way to control a MiniDSP 2x4HD and other compatible variants from the command line\
 """
 maintainer = "Mathieu Rene <mathieu.rene@gmail.com>"
-maintainer-scripts = "debian/"
+maintainer-scripts = "../debian/"
 priority = "optional"
 section = "utility"
-systemd-units = { enable = true, start = true }
-
-maintainer-scripts = "../debian/"
 systemd-units = { enable = true, start = true }
