@@ -49,13 +49,23 @@ if [ ! -f /tmp/sysroot-dl ]; then
   touch /tmp/sysroot-dl
 fi
 
-mkdir -p ~/.cargo/
+# NB: the official rust Docker images set CARGO_HOME=/usr/local/cargo, not
+# ~/.cargo — writing to ~/.cargo/config.toml is silently ignored.
+CARGO_CONFIG_DIR="${CARGO_HOME:-$HOME/.cargo}"
+mkdir -p "$CARGO_CONFIG_DIR"
 
-# point cargo to use gcc wrapper as linker
-echo -e '[target.arm-unknown-linux-gnueabihf]\nlinker = "gcc-sysroot"\nstrip = { path = "arm-linux-gnueabihf-strip" }\nobjcopy = { path = "arm-linux-gnueabihf-objcopy" }' > ~/.cargo/config.toml
+# point cargo to use gcc wrapper as linker. Also force the host (build
+# script/proc-macro) linker off rustc's self-contained lld: under x86_64-on-
+# arm64 QEMU emulation (e.g. Docker on Apple Silicon), rust-lld reliably
+# segfaults linking proc-macro cdylibs (e.g. thiserror-impl). bfd doesn't hit
+# this.
+echo -e '[target.arm-unknown-linux-gnueabihf]\nlinker = "gcc-sysroot"\nstrip = { path = "arm-linux-gnueabihf-strip" }\nobjcopy = { path = "arm-linux-gnueabihf-objcopy" }\n\n[target.x86_64-unknown-linux-gnu]\nrustflags = ["-C", "link-arg=-fuse-ld=bfd"]' > "$CARGO_CONFIG_DIR/config.toml"
 
-# Somehow .cargo/config.toml's linker settings are ignored
-export RUSTFLAGS="-C linker=gcc-sysroot"
+# NB: don't also export a blanket RUSTFLAGS here — a plain RUSTFLAGS env var
+# fully overrides *all* config-file rustflags (every target, not just the one
+# it's meant for), which would blow away the x86_64 (host) bfd override above.
+# The per-target CARGO_TARGET_..._LINKER env var below is sufficient for the
+# ARM cross target.
 export CC_ARM_UNKNOWN_LINUX_GNUEABIHF=gcc-sysroot
 export CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER="gcc-sysroot -ldl"
 
