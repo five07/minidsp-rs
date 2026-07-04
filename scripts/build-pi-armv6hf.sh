@@ -20,6 +20,9 @@ if [ ! -d /tmp/debs ]; then
   mkdir /tmp/debs
   git clone https://github.com/Ragnaroek/rust-on-raspberry-docker.git
   cd rust-on-raspberry-docker/apt
+  # raspbian.raspberrypi.org dropped its buster suite; legacy.raspbian.org keeps
+  # EOL suites around indefinitely.
+  sed -i 's#raspbian.raspberrypi.org#legacy.raspbian.org#' sources.list
   ./install-keys.sh
   ./download.sh libhidapi-libusb0 libhidapi-dev libusb-1.0-0-dev libc6-dev libssl-dev libudev-dev
   mv *.deb /tmp/debs
