@@ -60,6 +60,7 @@ These device support the full feature set. See the [documentation](https://minid
 
 - miniDSP 2x4HD
 - miniDSP Flex
+- miniDSP Flex Eight
 - DDRC-24
 - DDRC-88A/D
 - miniSHARC series
