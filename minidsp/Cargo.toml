@@ -102,11 +102,6 @@ assets = [
     "644",
   ],
   [
-    "../debian/minidsp.service",
-    "lib/systemd/system/minidsp.service",
-    "644",
-  ],
-  [
     "../debian/minidsp.udev",
     "lib/udev/rules.d/99-minidsp.rules",
     "644",
@@ -122,4 +117,7 @@ maintainer = "Mathieu Rene <mathieu.rene@gmail.com>"
 maintainer-scripts = "debian/"
 priority = "optional"
 section = "utility"
+systemd-units = { enable = true, start = true }
+
+maintainer-scripts = "../debian/"
 systemd-units = { enable = true, start = true }
